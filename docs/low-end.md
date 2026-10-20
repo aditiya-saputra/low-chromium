@@ -45,8 +45,10 @@ symbol_level = 0
 # components/safe_browsing/buildflags.gni:11-28 (0 = disabled)
 safe_browsing_mode = 0
 
+# Keep H.264/AAC. Setting this to false drops them (media/media_options.gni:59-61,
+# :122), which pushes video sites onto software VP9/Opus and costs more CPU.
 # build/config/features.gni:31
-proprietary_codecs = false
+proprietary_codecs = true
 
 # printing/buildflags/buildflags.gni:30
 enable_print_preview = false
@@ -91,13 +93,41 @@ is the name to use on the command line.
 - No on-device model features (summaries, compose, etc.).
 - `--disable-site-isolation-trials` lowers the process isolation security
   boundary. Do not use it for everyday browsing of untrusted sites.
-- `proprietary_codecs = false` removes hardware-friendly H.264/AAC support;
-  playback may fall back to software decoding and use *more* CPU.
+- `proprietary_codecs` is kept `true` on purpose: disabling it removes H.264/AAC
+  and the HLS demuxer (`media/media_options.gni:59-61`, `:122`), so video sites
+  fall back to software VP9/Opus and burn more CPU on weak hardware.
+
+## Images and video: what SSE2 does and does not do
+
+SSE2 is used for decoding and color conversion, not for compositing. Tiles are
+rasterized and composited on the GPU.
+
+| Path | Source | Role |
+| --- | --- | --- |
+| `skia/ext/convolver_SSE2.cc` | `skia/BUILD.gn:327-328` | image resampling / convolution |
+| libyuv | `DEPS:2723-2724` | YUV to RGB conversion for video frames |
+| libjpeg-turbo | `DEPS:2683-2684` | JPEG decoding |
+| FFmpeg | `DEPS:2290-2291` | software video decoding (H.264/VP9/AV1) |
+
+`media/base/simd/` no longer exists in this revision (verified 404); do not look
+for it. There is no build flag that disables SSE2, and it should not be disabled:
+on x86-64 it is the compiler baseline, and disabling it only makes decoding
+slower.
+
+Hardware video decode is the real lever on low-end x86:
+
+- `kAcceleratedVideoDecodeLinux` (`media/base/media_switches.cc:1492-1501`) is
+  enabled by default when the build uses `USE_VAAPI`; its feature name for
+  `--disable-features`/`--enable-features` is `AcceleratedVideoDecoder`.
+- `kAcceleratedVideoDecodeLinuxGL` is enabled by default (`:1503`).
+- Check `chrome://gpu` for `Video Decode: Hardware`. If it says software only,
+  hardware decode is not working regardless of the args above.
 
 ## What this preset does not do
 
 - It does not reduce the baseline memory of a renderer process.
 - It does not strip telemetry code from the binary; it disables defaults.
+- It does not change SSE2 usage or GPU rendering; both are unaffected.
 - It does not make Chromium buildable on machines below ~8 GB RAM.
 
 ## Verification status
