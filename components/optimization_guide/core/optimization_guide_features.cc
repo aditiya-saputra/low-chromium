@@ -84,10 +84,10 @@ BASE_FEATURE(kBuildTFLiteModelExecutionTaskOnLoadingThread,
 // Service.
 BASE_FEATURE(kOptimizationGuideFetchingForSRP,
              "OptimizationHintsFetchingSRP",
-             base::FEATURE_ENABLED_BY_DEFAULT);
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 // Kill switch for disabling model quality logging.
-BASE_FEATURE(kModelQualityLogging, base::FEATURE_ENABLED_BY_DEFAULT);
+BASE_FEATURE(kModelQualityLogging, base::FEATURE_DISABLED_BY_DEFAULT);
 
 // An emergency kill switch feature to stop serving certain model versions per
 // optimization target. This is useful in exceptional situations when a bad
@@ -98,7 +98,7 @@ BASE_FEATURE(kOptimizationGuidePredictionModelKillswitch,
 
 // Whether to enable model execution.
 BASE_FEATURE(kOptimizationGuideModelExecution,
-             base::FEATURE_ENABLED_BY_DEFAULT);
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 // Whether the on device service is launched after a delay on startup to log
 // metrics.

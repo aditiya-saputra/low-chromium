@@ -179,7 +179,7 @@ BASE_FEATURE(kBackgroundFetchLocalNetworkAccess,
              base::FEATURE_ENABLED_BY_DEFAULT);
 
 // Enable using the BackForwardCache.
-BASE_FEATURE(kBackForwardCache, base::FEATURE_ENABLED_BY_DEFAULT);
+BASE_FEATURE(kBackForwardCache, base::FEATURE_DISABLED_BY_DEFAULT);
 
 // Set a time limit for the page to enter the cache. Disabling this prevents
 // flakes during testing.
@@ -878,11 +878,11 @@ BASE_FEATURE(kPreloadingRespectUserAgentOverride,
 //
 // Enabled except for Android WebView.
 BASE_FEATURE(kPrerender2FallbackPrefetchSpecRules,
-             base::FEATURE_ENABLED_BY_DEFAULT);
+             base::FEATURE_DISABLED_BY_DEFAULT);
 
 // If enabled, the feature allows the prerender host to be reused for the
 // future same-site page prerender if marked as reusable.
-BASE_FEATURE(kPrerender2ReuseHost, base::FEATURE_ENABLED_BY_DEFAULT);
+BASE_FEATURE(kPrerender2ReuseHost, base::FEATURE_DISABLED_BY_DEFAULT);
 
 // If enabled, the feature parameter allows all the prerender hosts for
 // DSE search results to be reused.
